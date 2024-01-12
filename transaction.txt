@@ -1,0 +1,51 @@
+import javax.persistence.*;
+import java.util.Date;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+public enum TransactionType {
+    DEPOSIT,
+    WITHDRAWAL,
+    TRANSFER
+}
+
+@Entity
+public class Transaction {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String description;
+    private double amount;
+    private Date date;
+
+    @Enumerated(EnumType.STRING)
+    private TransactionType type;
+
+    // Constructors, getters, and setters
+}
+
+public interface TransactionRepository extends JpaRepository<Transaction, Long> {
+    // additional query methods if needed
+}
+
+@Service
+public class TransactionService {
+
+    @Autowired
+    private TransactionRepository transactionRepository;
+
+    public List<Transaction> getAllTransactions() {
+        return transactionRepository.findAll();
+    }
+
+    public Transaction getTransactionById(Long transactionId) {
+        return transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid transaction ID"));
+    }
+
+    // Additional methods for transaction operations
+}
