@@ -1,0 +1,45 @@
+// User.java
+@Entity
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String username;
+    private String password;
+    private double balance;
+
+    // constructors, getters, setters
+}
+// UserService.java
+@Service
+public class UserService {
+    @Autowired
+    private UserRepository userRepository;
+
+    public User createUser(String username, String password, double initialBalance) {
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setBalance(initialBalance);
+        return userRepository.save(user);
+    }
+
+    // other methods as needed
+}
+// UserController.java
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+    @Autowired
+    private UserService userService;
+
+    @PostMapping
+    public ResponseEntity<User> createUser(@RequestParam String username,
+                                          @RequestParam String password,
+                                          @RequestParam double initialBalance) {
+        User newUser = userService.createUser(username, password, initialBalance);
+        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+    }
+
+    // other endpoints as needed
+}
